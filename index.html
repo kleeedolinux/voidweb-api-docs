@@ -150,35 +150,46 @@
   "visible": true
 }
         </pre>
-
-        <h3 id="put-domain" class="text-xl font-semibold mb-2"><i class="fas fa-edit mr-2"></i>4. <code>PUT /domains/{key}</code></h3>
-        <p class="mb-2">Updates a domain's information using the <code>secret_key</code>.</p>
-        <h4 class="font-semibold mb-2">Request Parameters (JSON Body)</h4>
-        <ul class="list-disc list-inside mb-2">
-            <li><code>ip</code> (string): New domain IP (optional).</li>
-            <li><code>secret_key</code> (string): New secret key for the domain (optional).</li>
-            <li><code>visible</code> (boolean): Sets domain visibility (optional).</li>
-        </ul>
-        <h4 class="font-semibold mb-2">Example Request</h4>
-        <pre>
+<h3 id="put-domain" class="text-xl font-semibold mb-2"><i class="fas fa-edit mr-2"></i>4. <code>PUT /domains/{name}/{tld}/{key}</code></h3>
+<p class="mb-2">Updates a domain's information using the <code>secret_key</code>.</p>
+<h4 class="font-semibold mb-2">Request Parameters (JSON Body)</h4>
+<ul class="list-disc list-inside mb-2">
+    <li><code>ip</code> (string): New domain IP (optional).</li>
+    <li><code>secret_key</code> (string): New secret key for the domain (optional).</li>
+    <li><code>visible</code> (boolean): Sets domain visibility (optional).</li>
+</ul>
+<h4 class="font-semibold mb-2">Example Request</h4>
+<pre>
 {
   "ip": "192.168.1.2",
   "secret_key": "new-secret-key",
   "visible": false
 }
-        </pre>
+</pre>
 
-        <h3 id="delete-domain" class="text-xl font-semibold mb-2"><i class="fas fa-trash mr-2"></i>5. <code>DELETE /domains/{key}</code></h3>
-        <p class="mb-2">Removes a domain from the database using the <code>secret_key</code>.</p>
-        <h4 class="font-semibold mb-2">Example Response (Success)</h4>
-        <pre>Status 200 OK</pre>
-        <h4 class="font-semibold mb-2">Example Response (Error)</h4>
-        <pre>
+<h4 class="font-semibold mb-2">Possible Error Responses</h4>
+<ul class="list-disc list-inside mb-2">
+    <li><code>403 Unauthorized</code>: If the <code>secret_key</code> does not match the domain's secret key or the global secret key.</li>
+    <li><code>404 Not Found</code>: If the domain specified by <code>{name}</code> and <code>{tld}</code> does not exist.</li>
+</ul>
+
+<h3 id="delete-domain" class="text-xl font-semibold mb-2"><i class="fas fa-trash mr-2"></i>5. <code>DELETE /domains/{name}/{tld}/{key}</code></h3>
+<p class="mb-2">Removes a domain from the database using the <code>secret_key</code>.</p>
+<h4 class="font-semibold mb-2">Possible Error Responses</h4>
+<ul class="list-disc list-inside mb-2">
+    <li><code>403 Unauthorized</code>: If the <code>secret_key</code> does not match the domain's secret key or the global secret key.</li>
+    <li><code>404 Not Found</code>: If the domain specified by <code>{name}</code> and <code>{tld}</code> does not exist.</li>
+</ul>
+
+<h4 class="font-semibold mb-2">Example Response (Success)</h4>
+<pre>Status 200 OK</pre>
+<h4 class="font-semibold mb-2">Example Response (Error)</h4>
+<pre>
 Status 404 Not Found
 {
   "error": "Domain not found"
 }
-        </pre>
+</pre>
 
         <h3 id="get-domains" class="text-xl font-semibold mb-2"><i class="fas fa-list-alt mr-2"></i>6. <code>GET /domains</code></h3>
         <p class="mb-2">Returns a list of all visible domains.</p>
