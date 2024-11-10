@@ -1,0 +1,229 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ErebusAPI Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #1a202c;
+            color: #cbd5e0;
+        }
+        .light-mode {
+            background-color: #f7fafc;
+            color: #2d3748;
+        }
+        .sidebar {
+            transition: transform 0.3s;
+        }
+        .sidebar a {
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #4a5568;
+            transform: translateX(10px);
+        }
+        .toggle-btn {
+            transition: transform 0.3s;
+        }
+        .toggle-btn:hover {
+            transform: rotate(180deg);
+        }
+        pre {
+            background-color: #2d3748;
+            color: #cbd5e0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .content {
+            opacity: 0;
+            animation: fadeIn 1s forwards, slideIn 1s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar-visible {
+            transform: translateX(0);
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0) !important;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+
+    <div class="fixed top-4 right-4 z-50 flex space-x-4">
+        <i class="fas fa-bars text-2xl cursor-pointer md:hidden" id="menu-toggle"></i>
+        <i class="fas fa-adjust text-2xl cursor-pointer" id="theme-toggle"></i>
+    </div>
+
+    <div class="sidebar fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4 sidebar-hidden md:sidebar-visible">
+        <h2 class="text-2xl font-bold mb-4"><i class="fas fa-book mr-2"></i>Navigation</h2>
+        <a href="#base-url" class="block py-2 px-4 rounded"><i class="fas fa-link mr-2"></i>Base URL</a>
+        <a href="#endpoints" class="block py-2 px-4 rounded"><i class="fas fa-list mr-2"></i>Endpoints</a>
+        <a href="#get-root" class="block py-2 px-4 rounded"><i class="fas fa-home mr-2"></i>GET /</a>
+        <a href="#post-domains" class="block py-2 px-4 rounded"><i class="fas fa-plus mr-2"></i>POST /domains</a>
+        <a href="#get-domain" class="block py-2 px-4 rounded"><i class="fas fa-search mr-2"></i>GET /domains/{name}/{tld}</a>
+        <a href="#put-domain" class="block py-2 px-4 rounded"><i class="fas fa-edit mr-2"></i>PUT /domains/{key}</a>
+        <a href="#delete-domain" class="block py-2 px-4 rounded"><i class="fas fa-trash mr-2"></i>DELETE /domains/{key}</a>
+        <a href="#get-domains" class="block py-2 px-4 rounded"><i class="fas fa-list-alt mr-2"></i>GET /domains</a>
+        <a href="#get-tlds" class="block py-2 px-4 rounded"><i class="fas fa-globe mr-2"></i>GET /tlds</a>
+        <a href="#get-ip" class="block py-2 px-4 rounded"><i class="fas fa-network-wired mr-2"></i>GET /:name/:tld/ip</a>
+    </div>
+
+    <div class="content ml-0 md:ml-64 p-8">
+        <h1 id="base-url" class="text-4xl font-bold mb-6"><i class="fas fa-book-open mr-2"></i>ErebusAPI Documentation</h1>
+
+        <h2 class="text-2xl font-semibold mb-4"><i class="fas fa-link mr-2"></i>Base URL</h2>
+        <pre>http://localhost:4567</pre>
+
+        <h2 id="endpoints" class="text-2xl font-semibold mb-4"><i class="fas fa-list mr-2"></i>Endpoints</h2>
+
+        <h3 id="get-root" class="text-xl font-semibold mb-2"><i class="fas fa-home mr-2"></i>1. <code>GET /</code></h3>
+        <p class="mb-2">Returns a welcome message and a list of available endpoints.</p>
+        <h4 class="font-semibold mb-2">Example Response</h4>
+        <pre>
+{
+  "message": "Hello, VoidWeb!",
+  "endpoints": [
+    "GET /domains",
+    "GET /domains/{name}/{tld}",
+    "POST /domains",
+    "PUT /domains/{key}",
+    "DELETE /domains/{key}",
+    "GET /tlds",
+    "GET /:name/:tld/ip"
+  ],
+  "ratelimits": "40 requests per 60s"
+}
+        </pre>
+
+        <h3 id="post-domains" class="text-xl font-semibold mb-2"><i class="fas fa-plus mr-2"></i>2. <code>POST /domains</code></h3>
+        <p class="mb-2">Creates a new domain.</p>
+        <h4 class="font-semibold mb-2">Request Parameters (JSON Body)</h4>
+        <ul class="list-disc list-inside mb-2">
+            <li><code>name</code> (string): Domain name.</li>
+            <li><code>tld</code> (string): Top-level domain (e.g., "com", "org").</li>
+            <li><code>ip</code> (string): Domain IP address.</li>
+            <li><code>secret_key</code> (string): Secret key for future operations (min 8 characters).</li>
+            <li><code>visible</code> (boolean): Domain visibility (optional).</li>
+        </ul>
+        <h4 class="font-semibold mb-2">Example Request</h4>
+        <pre>
+{
+  "name": "example",
+  "tld": "com",
+  "ip": "192.168.1.1",
+  "secret_key": "your-secret-key",
+  "visible": true
+}
+        </pre>
+
+        <h3 id="get-domain" class="text-xl font-semibold mb-2"><i class="fas fa-search mr-2"></i>3. <code>GET /domains/{name}/{tld}</code></h3>
+        <p class="mb-2">Fetches information for a specific domain using its name and TLD.</p>
+        <h4 class="font-semibold mb-2">Example Response</h4>
+        <pre>
+{
+  "tld": "com",
+  "name": "example",
+  "ip": "192.168.1.1",
+  "visible": true
+}
+        </pre>
+
+        <h3 id="put-domain" class="text-xl font-semibold mb-2"><i class="fas fa-edit mr-2"></i>4. <code>PUT /domains/{key}</code></h3>
+        <p class="mb-2">Updates a domain's information using the <code>secret_key</code>.</p>
+        <h4 class="font-semibold mb-2">Request Parameters (JSON Body)</h4>
+        <ul class="list-disc list-inside mb-2">
+            <li><code>ip</code> (string): New domain IP (optional).</li>
+            <li><code>secret_key</code> (string): New secret key for the domain (optional).</li>
+            <li><code>visible</code> (boolean): Sets domain visibility (optional).</li>
+        </ul>
+        <h4 class="font-semibold mb-2">Example Request</h4>
+        <pre>
+{
+  "ip": "192.168.1.2",
+  "secret_key": "new-secret-key",
+  "visible": false
+}
+        </pre>
+
+        <h3 id="delete-domain" class="text-xl font-semibold mb-2"><i class="fas fa-trash mr-2"></i>5. <code>DELETE /domains/{key}</code></h3>
+        <p class="mb-2">Removes a domain from the database using the <code>secret_key</code>.</p>
+        <h4 class="font-semibold mb-2">Example Response (Success)</h4>
+        <pre>Status 200 OK</pre>
+        <h4 class="font-semibold mb-2">Example Response (Error)</h4>
+        <pre>
+Status 404 Not Found
+{
+  "error": "Domain not found"
+}
+        </pre>
+
+        <h3 id="get-domains" class="text-xl font-semibold mb-2"><i class="fas fa-list-alt mr-2"></i>6. <code>GET /domains</code></h3>
+        <p class="mb-2">Returns a list of all visible domains.</p>
+        <h4 class="font-semibold mb-2">Example Response</h4>
+        <pre>
+[
+  { "name": "example", "tld": "com", "ip": "192.168.1.1" },
+  { "name": "example2", "tld": "org", "ip": "192.168.1.2" }
+]
+        </pre>
+
+        <h3 id="get-tlds" class="text-xl font-semibold mb-2"><i class="fas fa-globe mr-2"></i>7. <code>GET /tlds</code></h3>
+        <p class="mb-2">Returns the list of allowed TLDs.</p>
+        <h4 class="font-semibold mb-2">Example Response</h4>
+        <pre>
+["com", "org", "net", "io", ...]
+        </pre>
+
+        <h3 id="get-ip" class="text-xl font-semibold mb-2"><i class="fas fa-network-wired mr-2"></i>8. <code>GET /:name/:tld/ip</code></h3>
+        <p class="mb-2">Retrieves the IP of a domain by name and TLD. Returns a link for invalid domains or empty IPs.</p>
+        <h4 class="font-semibold mb-2">Example Response (valid domain)</h4>
+        <pre>
+{ "ip": "192.168.1.1" }
+        </pre>
+        <h4 class="font-semibold mb-2">Example Response (invalid domain)</h4>
+        <pre>
+{ "ip": "https://github.com/kleeedolinux/voidwebinvalid/tree/main" }
+        </pre>
+        <h4 class="font-semibold mb-2">Example Response (empty IP)</h4>
+        <pre>
+{ "ip": "https://github.com/kleeedolinux/voidwebinvalid/tree/iperror" }
+        </pre>
+    </div>
+
+    <script>
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('light-mode');
+        });
+
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('sidebar-hidden');
+            sidebar.classList.toggle('sidebar-visible');
+        });
+    </script>
+</body>
+</html>
